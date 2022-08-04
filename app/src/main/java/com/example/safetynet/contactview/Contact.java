@@ -41,6 +41,10 @@ public class Contact {
         Set<String> contactsSet = prefs.getStringSet(ModeToKey(mode), null);
         return Decode(contactsSet);
     }
+    public static void Clear(Context context, StorageMode mode) {
+        SharedPreferences prefs = context.getSharedPreferences("Contacts", Context.MODE_PRIVATE);
+        prefs.edit().remove(ModeToKey(mode));
+    }
     private static String ModeToKey(StorageMode mode) {
         switch(mode) {
             case MASTER_LIST:

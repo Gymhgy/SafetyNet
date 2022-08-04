@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.safetynet.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
@@ -30,6 +31,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             contactTextView = (TextView) itemView.findViewById(R.id.contact_name);
             actionButton = (CheckBox) itemView.findViewById(R.id.action_button);
             if(!check) actionButton.setButtonDrawable(R.drawable.x_checkbox_selector);
+
         }
 
         public TextView getTextView() {
@@ -47,6 +49,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
      * by RecyclerView.
      */
     private boolean check = false;
+    private List<Integer> indices = new ArrayList<>();
     public ContactAdapter(List<Contact> dataSet) {
         contactSet = dataSet;
     }
@@ -75,6 +78,17 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.getTextView().setText(contactSet.get(position).toString());
+        viewHolder.getActionButton().setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(!check) {
+                    int pos = viewHolder.getAdapterPosition();
+                    contactSet.remove(pos);
+                    notifyItemChanged(pos);
+                    notifyItemRangeChanged(pos,getItemCount());
+                }
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)

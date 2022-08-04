@@ -1,8 +1,10 @@
 package com.example.safetynet;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +12,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,17 +29,16 @@ public class OnboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboard);
 
-        List<Contact> contacts = Contact.Retrieve(this, Contact.StorageMode.MASTER_LIST);
-
-        Button addButton = (Button)findViewById(R.id.addButton);
-        EditText contactNumber = (EditText)findViewById(R.id.contactNumber);
-        addButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                contacts.add(new Contact(null, contactNumber.getText().toString()));
-                contactNumber.getText().clear();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
             }
-        });
+            else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 0);
+            }
+        }
+
+        List<Contact> contacts = Contact.Retrieve(this, Contact.StorageMode.MASTER_LIST);
 
         Button addFromContacts = (Button)findViewById(R.id.addFromContacts);
         addFromContacts.setOnClickListener(new View.OnClickListener(){
@@ -63,6 +66,17 @@ public class OnboardActivity extends AppCompatActivity {
         ContactAdapter adapter = new ContactAdapter(contacts);
         rvContacts.setAdapter(adapter);
         rvContacts.setLayoutManager(new LinearLayoutManager(this));
+
+        Button addButton = (Button)findViewById(R.id.addButton);
+        EditText contactNumber = (EditText)findViewById(R.id.contactNumber);
+        addButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                contacts.add(new Contact(null, contactNumber.getText().toString()));
+                contactNumber.getText().clear();
+                adapter.notifyItemChanged(contacts.size() - 1);
+            }
+        });
 
         EditText emergencyMsg = (EditText)findViewById(R.id.emergencyMsg);
         Button finishButton= (Button)findViewById(R.id.finishButton);
