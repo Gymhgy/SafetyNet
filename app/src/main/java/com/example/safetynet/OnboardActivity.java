@@ -25,7 +25,7 @@ public class OnboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboard);
 
-        List<Contact> contacts = Contact.Retrieve(this);
+        List<Contact> contacts = Contact.Retrieve(this, Contact.StorageMode.MASTER_LIST);
 
         Button addButton = (Button)findViewById(R.id.addButton);
         EditText contactNumber = (EditText)findViewById(R.id.contactNumber);
@@ -64,6 +64,7 @@ public class OnboardActivity extends AppCompatActivity {
         rvContacts.setAdapter(adapter);
         rvContacts.setLayoutManager(new LinearLayoutManager(this));
 
+        EditText emergencyMsg = (EditText)findViewById(R.id.emergencyMsg);
         Button finishButton= (Button)findViewById(R.id.finishButton);
         finishButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -72,7 +73,8 @@ public class OnboardActivity extends AppCompatActivity {
                 SharedPreferences.Editor ed = prefs.edit();
                 ed.putBoolean("onboarded", true);
                 ed.apply();
-                Contact.Save(OnboardActivity.this, contacts);
+                MessageManager.setMasterMessage(OnboardActivity.this, emergencyMsg.getText().toString());
+                Contact.Save(OnboardActivity.this, contacts, Contact.StorageMode.MASTER_LIST);
                 Intent intent = new Intent(OnboardActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
