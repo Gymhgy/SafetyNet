@@ -36,4 +36,6 @@ public class MainActivity extends AppCompatActivity {
         Button settings = (Button)findViewById(R.id.settingsButton);
 
     }
+
+
 }

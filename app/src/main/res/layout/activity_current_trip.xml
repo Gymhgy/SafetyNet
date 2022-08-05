@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:paddingStart="32dp"
     android:paddingEnd="32dp"
-    tools:context=".CurrentTripActivity">
+    tools:context=".CurrentTripActivity"
+    >
 
     <TextView
         android:id="@+id/tripInfo"

@@ -31,9 +31,11 @@ public class CurrentTripActivity extends AppCompatActivity {
         TextView endTimeTextView = (TextView) findViewById(R.id.endTimeTextView);
 
         SharedPreferences prefs = getSharedPreferences("TripInfo", Context.MODE_PRIVATE);
-        tripInfo.setText(prefs.getString("destination", "Your current trip"));
-        String tripTime = prefs.getString("expectedTripTime", "00:05");
-        if(TextUtils.isEmpty(tripTime)) tripTime = "00:05";
+        String tripStr = prefs.getString("destination", "Your current trip");
+        if(TextUtils.isEmpty(tripStr)) tripStr = "Your current trip";
+        tripInfo.setText(tripStr);
+        String tripTime = prefs.getString("expectedTripTime", "00:01");
+        if(TextUtils.isEmpty(tripTime)) tripTime = "00:01";
         int hours = Integer.parseInt(tripTime.split(":")[0]);
         int mins = Integer.parseInt(tripTime.split(":")[1]);
 
@@ -57,6 +59,8 @@ public class CurrentTripActivity extends AppCompatActivity {
                 ed.clear();
                 ed.apply();
 
+                AlertManager.cancel(CurrentTripActivity.this);
+
                 Intent intent = new Intent(CurrentTripActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -65,7 +69,7 @@ public class CurrentTripActivity extends AppCompatActivity {
 
         List<Contact> tripContacts = Contact.Retrieve(this, Contact.StorageMode.TRIP_SPECIFIC);
         RecyclerView rvCurTripContacts = (RecyclerView) findViewById(R.id.curTripContacts);
-        ContactAdapter adapter = new ContactAdapter(tripContacts);
+        ContactAdapter adapter = new ContactAdapter(tripContacts, true);
         rvCurTripContacts.setAdapter(adapter);
         rvCurTripContacts.setLayoutManager(new LinearLayoutManager(this));
 
